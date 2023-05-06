@@ -40,6 +40,8 @@ public class Beer {
     @Column(length = 50)
     @Size(max = 50)
     private String beerName;
+
+    @Enumerated(EnumType.STRING)
     private BeerStyle beerStyle;
 
     @NotNull
