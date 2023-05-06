@@ -1,23 +1,36 @@
 package nabil.springmvcrest.beer.controllers;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.ToString;
 import nabil.springmvcrest.beer.entities.Beer;
 import nabil.springmvcrest.beer.mappers.BeerMapper;
+import nabil.springmvcrest.beer.model.BeerCSV;
 import nabil.springmvcrest.beer.model.BeerDTO;
 import nabil.springmvcrest.beer.repositories.BeerRepository;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.annotation.Rollback;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.context.WebApplicationContext;
 
 import java.util.List;
 import java.util.UUID;
 
 
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.hamcrest.core.Is.is;
+
 @SpringBootTest
 class BeerControllerIT {
     @Autowired
@@ -29,9 +42,34 @@ class BeerControllerIT {
     @Autowired
     BeerMapper beerMapper;
 
+    @Autowired
+    WebApplicationContext wac;
+
+    @Autowired
+    ObjectMapper objectMapper;
+    MockMvc mockMvc;
+
+    @BeforeEach
+    void setUp() {
+        mockMvc = MockMvcBuilders.webAppContextSetup(wac).build();
+    }
+
+    @Test
+    void testGetAllBeersNameQueryParam() throws Exception {
+        mockMvc.perform(get(BeerController.BEER_API)
+                .queryParam("beerName", "IPA"))
+                .andExpect(status().isOk())
+                .andExpect(result -> {
+                    List<BeerDTO> dtos = objectMapper.readValue(result.getResponse().getContentAsByteArray(), new TypeReference<>() {});
+                    dtos.forEach(dto -> {
+                        assertThat(dto.getBeerName().toLowerCase()).contains("ipa");
+                    });
+                })
+                .andExpect(jsonPath("$.size()", is(336)));
+    }
     @Test
     void testGetAllBeers() {
-        List<BeerDTO> dtos = beerController.getAllBeers();
+        List<BeerDTO> dtos = beerController.getAllBeers(null);
         assertEquals(2413, dtos.size());
     }
 
@@ -40,7 +78,7 @@ class BeerControllerIT {
     @Test
     void testGetAllBeersEmpty() {
         beerRepository.deleteAll();
-        List<BeerDTO> dtos = beerController.getAllBeers();
+        List<BeerDTO> dtos = beerController.getAllBeers(null);
         assertThat(dtos.size()).isEqualTo(0);
     }
 

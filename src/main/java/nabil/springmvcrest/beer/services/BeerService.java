@@ -7,7 +7,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 public interface BeerService {
-    List<BeerDTO> findAll();
+    List<BeerDTO> findAll(String beerName);
     Optional<BeerDTO> findBeerById(UUID id);
     BeerDTO addNewBeer(BeerDTO beer);
     Optional<BeerDTO> updateBeer(UUID id, BeerDTO newBeer);

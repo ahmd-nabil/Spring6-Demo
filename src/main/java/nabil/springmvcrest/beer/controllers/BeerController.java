@@ -21,8 +21,8 @@ public class BeerController {
     public static final String BEER_API = "/api/v1/beers";
     public static final String BEER_API_ID = BEER_API + "/{id}";
     @GetMapping(BEER_API)
-    public List<BeerDTO> getAllBeers() {
-        return beerService.findAll();
+    public List<BeerDTO> getAllBeers(@RequestParam(name = "beerName", required = false) String beerName) {
+        return beerService.findAll(beerName);
     }
 
     @GetMapping(BEER_API_ID)

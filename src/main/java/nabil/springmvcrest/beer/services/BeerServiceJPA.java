@@ -21,8 +21,14 @@ public class BeerServiceJPA implements BeerService{
     private final BeerRepository beerRepository;
     private final BeerMapper beerMapper;
     @Override
-    public List<BeerDTO> findAll() {
-        return beerRepository.findAll().stream().map(beerMapper::beerToBeerDto).collect(Collectors.toList());
+    public List<BeerDTO> findAll(String beerName) {
+        List<Beer> result;
+        if(beerName == null || beerName.isBlank() || beerName.isEmpty()) {
+            result = beerRepository.findAll();
+        } else {
+            result = beerRepository.findAllByBeerNameLike("%" + beerName + "%");
+        }
+        return result.stream().map(beerMapper::beerToBeerDto).collect(Collectors.toList());
     }
 
     @Override
