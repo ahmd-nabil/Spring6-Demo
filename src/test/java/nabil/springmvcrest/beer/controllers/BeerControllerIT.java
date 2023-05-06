@@ -7,11 +7,13 @@ import nabil.springmvcrest.beer.entities.Beer;
 import nabil.springmvcrest.beer.mappers.BeerMapper;
 import nabil.springmvcrest.beer.model.BeerCSV;
 import nabil.springmvcrest.beer.model.BeerDTO;
+import nabil.springmvcrest.beer.model.BeerStyle;
 import nabil.springmvcrest.beer.repositories.BeerRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.annotation.Rollback;
@@ -55,6 +57,19 @@ class BeerControllerIT {
     }
 
     @Test
+    void testGetAllByBeerStyle() throws Exception {
+        mockMvc.perform(get(BeerController.BEER_API)
+                        .queryParam("beerStyle", BeerStyle.IPA.toString()))
+                .andExpect(status().isOk())
+                .andExpect(result -> {
+                    List<BeerDTO> dtos = objectMapper.readValue(result.getResponse().getContentAsByteArray(), new TypeReference<>() {});
+                    dtos.forEach(dto -> {
+                        assertThat(dto.getBeerStyle()).isEqualTo(BeerStyle.IPA);
+                    });
+                })
+                .andExpect(jsonPath("$.size()", is(1806 )));
+    }
+    @Test
     void testGetAllBeersNameQueryParam() throws Exception {
         mockMvc.perform(get(BeerController.BEER_API)
                 .queryParam("beerName", "IPA"))
@@ -69,7 +84,7 @@ class BeerControllerIT {
     }
     @Test
     void testGetAllBeers() {
-        List<BeerDTO> dtos = beerController.getAllBeers(null);
+        List<BeerDTO> dtos = beerController.getAllBeers(null, null);
         assertEquals(2413, dtos.size());
     }
 
@@ -78,7 +93,7 @@ class BeerControllerIT {
     @Test
     void testGetAllBeersEmpty() {
         beerRepository.deleteAll();
-        List<BeerDTO> dtos = beerController.getAllBeers(null);
+        List<BeerDTO> dtos = beerController.getAllBeers(null, null);
         assertThat(dtos.size()).isEqualTo(0);
     }
 

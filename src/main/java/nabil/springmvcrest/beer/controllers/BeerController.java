@@ -2,7 +2,7 @@ package nabil.springmvcrest.beer.controllers;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import nabil.springmvcrest.beer.model.BeerDTO;
+import nabil.springmvcrest.beer.model.BeerDTO;import nabil.springmvcrest.beer.model.BeerStyle;
 import nabil.springmvcrest.beer.services.BeerService;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -21,8 +21,9 @@ public class BeerController {
     public static final String BEER_API = "/api/v1/beers";
     public static final String BEER_API_ID = BEER_API + "/{id}";
     @GetMapping(BEER_API)
-    public List<BeerDTO> getAllBeers(@RequestParam(name = "beerName", required = false) String beerName) {
-        return beerService.findAll(beerName);
+    public List<BeerDTO> getAllBeers(@RequestParam(name = "beerName", required = false) String beerName,
+                                     @RequestParam(name = "beerStyle", required = false) BeerStyle beerStyle) {
+        return beerService.findAll(beerName, beerStyle);
     }
 
     @GetMapping(BEER_API_ID)

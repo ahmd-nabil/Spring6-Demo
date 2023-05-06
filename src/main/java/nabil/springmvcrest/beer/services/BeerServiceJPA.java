@@ -5,9 +5,11 @@ import nabil.springmvcrest.beer.controllers.ResourceNotFoundException;
 import nabil.springmvcrest.beer.entities.Beer;
 import nabil.springmvcrest.beer.mappers.BeerMapper;
 import nabil.springmvcrest.beer.model.BeerDTO;
+import nabil.springmvcrest.beer.model.BeerStyle;
 import nabil.springmvcrest.beer.repositories.BeerRepository;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import java.util.List;
 import java.util.Optional;
@@ -21,12 +23,14 @@ public class BeerServiceJPA implements BeerService{
     private final BeerRepository beerRepository;
     private final BeerMapper beerMapper;
     @Override
-    public List<BeerDTO> findAll(String beerName) {
+    public List<BeerDTO> findAll(String beerName, BeerStyle beerStyle) {
         List<Beer> result;
-        if(beerName == null || beerName.isBlank() || beerName.isEmpty()) {
-            result = beerRepository.findAll();
+        if(StringUtils.hasText(beerName) && beerStyle == null) {
+            result = beerRepository.findAllByBeerNameIsLikeIgnoreCase("%" + beerName + "%");
+        } else if(!StringUtils.hasText(beerName) && beerStyle != null) {
+            result = beerRepository.findAllByBeerStyle(beerStyle);
         } else {
-            result = beerRepository.findAllByBeerNameLike("%" + beerName + "%");
+            result = beerRepository.findAll();
         }
         return result.stream().map(beerMapper::beerToBeerDto).collect(Collectors.toList());
     }

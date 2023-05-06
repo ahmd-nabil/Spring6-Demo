@@ -28,41 +28,41 @@ public class Bootstrap implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        populateBeers();
-        populateDatabaseWithCSV();
+        if(beerRepository.count() < 100) {
+            populateBeers();
+            populateDatabaseWithCSV();
+        }
     }
 
     @Transactional
     public void populateDatabaseWithCSV() {
-        if(beerRepository.count() < 100) {
-            try {
-                List<BeerCSV> beerCSVList = beerCSVService.getBeerCSVList();
-                beerCSVList.stream().forEach(beerCSV -> {
-                    BeerStyle beerStyle = switch (beerCSV.getStyle()) {
-                        case "American Pale Lager" -> BeerStyle.LAGER;
-                        case "Cider" -> BeerStyle.GOSE;
-                        case "American Pale Ale (APA)" -> BeerStyle.PALE_ALE;
-                        case "American Blonde Ale" -> BeerStyle.ALE;
-                        case "Hefeweizen" -> BeerStyle.SAISON;
-                        case "Berliner Weissbier" -> BeerStyle.PILSNER;
-                        case "American Stout" -> BeerStyle.STOUT;
-                        case "Oatmeal Stout" -> BeerStyle.WHEAT;
-                        case "American Porter" -> BeerStyle.PORTER;
-                        default -> BeerStyle.IPA;
-                    };
+        try {
+            List<BeerCSV> beerCSVList = beerCSVService.getBeerCSVList();
+            beerCSVList.stream().forEach(beerCSV -> {
+                BeerStyle beerStyle = switch (beerCSV.getStyle()) {
+                    case "American Pale Lager" -> BeerStyle.LAGER;
+                    case "Cider" -> BeerStyle.GOSE;
+                    case "American Pale Ale (APA)" -> BeerStyle.PALE_ALE;
+                    case "American Blonde Ale" -> BeerStyle.ALE;
+                    case "Hefeweizen" -> BeerStyle.SAISON;
+                    case "Berliner Weissbier" -> BeerStyle.PILSNER;
+                    case "American Stout" -> BeerStyle.STOUT;
+                    case "Oatmeal Stout" -> BeerStyle.WHEAT;
+                    case "American Porter" -> BeerStyle.PORTER;
+                    default -> BeerStyle.IPA;
+                };
 
-                    Beer beer = Beer.builder()
-                            .beerName(beerCSV.getName().substring(0, Math.min(beerCSV.getName().length(), 50)))
-                            .beerStyle(beerStyle)
-                            .upc(beerCSV.getIbu())
-                            .quantityOnHand(beerCSV.getCount_x())
-                            .price(new BigDecimal(new Random().nextFloat(10, 10000)))
-                            .build();
-                    beerRepository.save(beer);
-                });
-            } catch (FileNotFoundException e) {
-                throw new RuntimeException(e);
-            }
+                Beer beer = Beer.builder()
+                        .beerName(beerCSV.getName().substring(0, Math.min(beerCSV.getName().length(), 50)))
+                        .beerStyle(beerStyle)
+                        .upc(beerCSV.getIbu())
+                        .quantityOnHand(beerCSV.getCount_x())
+                        .price(new BigDecimal(new Random().nextFloat(10, 10000)))
+                        .build();
+                beerRepository.save(beer);
+            });
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
         }
     }
 
