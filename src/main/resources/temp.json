@@ -1,0 +1,152 @@
+[
+  {
+    "codes": [
+      "NotNull.beerDTO.upc",
+      "NotNull.upc",
+      "NotNull.java.lang.String",
+      "NotNull"
+    ],
+    "arguments": [
+      {
+        "codes": [
+          "beerDTO.upc",
+          "upc"
+        ],
+        "arguments": null,
+        "defaultMessage": "upc",
+        "code": "upc"
+      }
+    ],
+    "defaultMessage": "must not be null",
+    "objectName": "beerDTO",
+    "field": "upc",
+    "rejectedValue": null,
+    "bindingFailure": false,
+    "code": "NotNull"
+  },
+  {
+    "codes": [
+      "NotBlank.beerDTO.upc",
+      "NotBlank.upc",
+      "NotBlank.java.lang.String",
+      "NotBlank"
+    ],
+    "arguments": [
+      {
+        "codes": [
+          "beerDTO.upc",
+          "upc"
+        ],
+        "arguments": null,
+        "defaultMessage": "upc",
+        "code": "upc"
+      }
+    ],
+    "defaultMessage": "must not be blank",
+    "objectName": "beerDTO",
+    "field": "upc",
+    "rejectedValue": null,
+    "bindingFailure": false,
+    "code": "NotBlank"
+  },
+  {
+    "codes": [
+      "NotNull.beerDTO.price",
+      "NotNull.price",
+      "NotNull.java.math.BigDecimal",
+      "NotNull"
+    ],
+    "arguments": [
+      {
+        "codes": [
+          "beerDTO.price",
+          "price"
+        ],
+        "arguments": null,
+        "defaultMessage": "price",
+        "code": "price"
+      }
+    ],
+    "defaultMessage": "must not be null",
+    "objectName": "beerDTO",
+    "field": "price",
+    "rejectedValue": null,
+    "bindingFailure": false,
+    "code": "NotNull"
+  },
+  {
+    "codes": [
+      "NotBlank.beerDTO.beerName",
+      "NotBlank.beerName",
+      "NotBlank.java.lang.String",
+      "NotBlank"
+    ],
+    "arguments": [
+      {
+        "codes": [
+          "beerDTO.beerName",
+          "beerName"
+        ],
+        "arguments": null,
+        "defaultMessage": "beerName",
+        "code": "beerName"
+      }
+    ],
+    "defaultMessage": "must not be blank",
+    "objectName": "beerDTO",
+    "field": "beerName",
+    "rejectedValue": null,
+    "bindingFailure": false,
+    "code": "NotBlank"
+  },
+  {
+    "codes": [
+      "NotNull.beerDTO.beerStyle",
+      "NotNull.beerStyle",
+      "NotNull.nabil.springmvcrest.beer.model.BeerStyle",
+      "NotNull"
+    ],
+    "arguments": [
+      {
+        "codes": [
+          "beerDTO.beerStyle",
+          "beerStyle"
+        ],
+        "arguments": null,
+        "defaultMessage": "beerStyle",
+        "code": "beerStyle"
+      }
+    ],
+    "defaultMessage": "must not be null",
+    "objectName": "beerDTO",
+    "field": "beerStyle",
+    "rejectedValue": null,
+    "bindingFailure": false,
+    "code": "NotNull"
+  },
+  {
+    "codes": [
+      "NotNull.beerDTO.beerName",
+      "NotNull.beerName",
+      "NotNull.java.lang.String",
+      "NotNull"
+    ],
+    "arguments": [
+      {
+        "codes": [
+          "beerDTO.beerName",
+          "beerName"
+        ],
+        "arguments": null,
+        "defaultMessage": "beerName",
+        "code": "beerName"
+      }
+    ],
+    "defaultMessage": "must not be null",
+    "objectName": "beerDTO",
+    "field": "beerName",
+    "rejectedValue": null,
+    "bindingFailure": false,
+    "code": "NotNull"
+  }
+]
