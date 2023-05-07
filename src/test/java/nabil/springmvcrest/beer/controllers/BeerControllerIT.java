@@ -2,18 +2,17 @@ package nabil.springmvcrest.beer.controllers;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.ToString;
 import nabil.springmvcrest.beer.entities.Beer;
 import nabil.springmvcrest.beer.mappers.BeerMapper;
-import nabil.springmvcrest.beer.model.BeerCSV;
 import nabil.springmvcrest.beer.model.BeerDTO;
 import nabil.springmvcrest.beer.model.BeerStyle;
+import nabil.springmvcrest.beer.model.RestResponsePage;
 import nabil.springmvcrest.beer.repositories.BeerRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.Import;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.annotation.Rollback;
@@ -57,18 +56,29 @@ class BeerControllerIT {
     }
 
     @Test
+    void testGetAllPage2() throws Exception {
+        mockMvc.perform(get(BeerController.BEER_API)
+                        .queryParam("pageNumber", String.valueOf(2))
+                        .queryParam("pageSize", String.valueOf(50)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.number", is(1)))
+                .andExpect(jsonPath("$.content.size()", is(50)));
+    }
+
+    @Test
     void testGetAllByBeerNameAndBeerStyle() throws Exception {
         mockMvc.perform(get(BeerController.BEER_API)
                         .queryParam("beerName", "IPA")
-                        .queryParam("beerStyle", BeerStyle.IPA.toString()))
+                        .queryParam("beerStyle", BeerStyle.IPA.toString())
+                        .queryParam("pageSize", String.valueOf(3000)))
                 .andExpect(status().isOk())
                 .andExpect(result -> {
-                    List<BeerDTO> dtos = objectMapper.readValue(result.getResponse().getContentAsByteArray(), new TypeReference<>() {});
-                    dtos.forEach(dto -> {
+                    Page<BeerDTO> dtosPage = objectMapper.readValue(result.getResponse().getContentAsByteArray(), new TypeReference<RestResponsePage<BeerDTO>>() {});
+                    dtosPage.getContent().forEach(dto -> {
                         assertThat(dto.getBeerStyle()).isEqualTo(BeerStyle.IPA);
                     });
                 })
-                .andExpect(jsonPath("$.size()", is(336 )));
+                .andExpect(jsonPath("$.content.size()", is(336 )));
     }
     @Test
     void testGetAllByBeerStyle() throws Exception {
@@ -76,12 +86,12 @@ class BeerControllerIT {
                         .queryParam("beerStyle", BeerStyle.IPA.toString()))
                 .andExpect(status().isOk())
                 .andExpect(result -> {
-                    List<BeerDTO> dtos = objectMapper.readValue(result.getResponse().getContentAsByteArray(), new TypeReference<>() {});
-                    dtos.forEach(dto -> {
+                    Page<BeerDTO> dtosPage = objectMapper.readValue(result.getResponse().getContentAsByteArray(), new TypeReference<RestResponsePage<BeerDTO>>() {});
+                    dtosPage.getContent().forEach(dto -> {
                         assertThat(dto.getBeerStyle()).isEqualTo(BeerStyle.IPA);
                     });
                 })
-                .andExpect(jsonPath("$.size()", is(1806 )));
+                .andExpect(jsonPath("$.content.size()", is(1806 )));
     }
     @Test
     void testGetAllBeersNameQueryParam() throws Exception {
@@ -89,17 +99,17 @@ class BeerControllerIT {
                 .queryParam("beerName", "IPA"))
                 .andExpect(status().isOk())
                 .andExpect(result -> {
-                    List<BeerDTO> dtos = objectMapper.readValue(result.getResponse().getContentAsByteArray(), new TypeReference<>() {});
-                    dtos.forEach(dto -> {
+                    Page<BeerDTO> page = objectMapper.readValue(result.getResponse().getContentAsByteArray(), new TypeReference<RestResponsePage<BeerDTO>>() {});
+                    page.getContent().forEach(dto -> {
                         assertThat(dto.getBeerName().toLowerCase()).contains("ipa");
                     });
                 })
-                .andExpect(jsonPath("$.size()", is(336)));
+                .andExpect(jsonPath("$.content.size()", is(336)));
     }
     @Test
     void testGetAllBeers() {
-        List<BeerDTO> dtos = beerController.getAllBeers(null, null);
-        assertEquals(2413, dtos.size());
+        Page<BeerDTO> dtos = beerController.getAllBeers(null, null, 0, 3000);
+        assertEquals(2413, dtos.getContent().size());
     }
 
     @Transactional
@@ -107,8 +117,8 @@ class BeerControllerIT {
     @Test
     void testGetAllBeersEmpty() {
         beerRepository.deleteAll();
-        List<BeerDTO> dtos = beerController.getAllBeers(null, null);
-        assertThat(dtos.size()).isEqualTo(0);
+        Page<BeerDTO> dtos = beerController.getAllBeers(null, null, null, null);
+        assertThat(dtos.getContent().size()).isEqualTo(0);
     }
 
     @Test
