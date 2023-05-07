@@ -21,7 +21,6 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
 
-import java.util.List;
 import java.util.UUID;
 
 
@@ -74,9 +73,7 @@ class BeerControllerIT {
                 .andExpect(status().isOk())
                 .andExpect(result -> {
                     Page<BeerDTO> dtosPage = objectMapper.readValue(result.getResponse().getContentAsByteArray(), new TypeReference<RestResponsePage<BeerDTO>>() {});
-                    dtosPage.getContent().forEach(dto -> {
-                        assertThat(dto.getBeerStyle()).isEqualTo(BeerStyle.IPA);
-                    });
+                    dtosPage.getContent().forEach(dto -> assertThat(dto.getBeerStyle()).isEqualTo(BeerStyle.IPA));
                 })
                 .andExpect(jsonPath("$.content.size()", is(336 )));
     }
@@ -87,9 +84,7 @@ class BeerControllerIT {
                 .andExpect(status().isOk())
                 .andExpect(result -> {
                     Page<BeerDTO> dtosPage = objectMapper.readValue(result.getResponse().getContentAsByteArray(), new TypeReference<RestResponsePage<BeerDTO>>() {});
-                    dtosPage.getContent().forEach(dto -> {
-                        assertThat(dto.getBeerStyle()).isEqualTo(BeerStyle.IPA);
-                    });
+                    dtosPage.getContent().forEach(dto -> assertThat(dto.getBeerStyle()).isEqualTo(BeerStyle.IPA));
                 })
                 .andExpect(jsonPath("$.content.size()", is(1806 )));
     }
@@ -100,9 +95,7 @@ class BeerControllerIT {
                 .andExpect(status().isOk())
                 .andExpect(result -> {
                     Page<BeerDTO> page = objectMapper.readValue(result.getResponse().getContentAsByteArray(), new TypeReference<RestResponsePage<BeerDTO>>() {});
-                    page.getContent().forEach(dto -> {
-                        assertThat(dto.getBeerName().toLowerCase()).contains("ipa");
-                    });
+                    page.getContent().forEach(dto -> assertThat(dto.getBeerName().toLowerCase()).contains("ipa"));
                 })
                 .andExpect(jsonPath("$.content.size()", is(336)));
     }
@@ -134,9 +127,7 @@ class BeerControllerIT {
 
     @Test
     void testGetBeerByIdException() {
-        assertThrows(ResourceNotFoundException.class, () -> {
-            beerController.getBeerById(UUID.randomUUID());
-        });
+        assertThrows(ResourceNotFoundException.class, () -> beerController.getBeerById(UUID.randomUUID()));
     }
 
     @Transactional
