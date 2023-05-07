@@ -11,9 +11,11 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 @Service
@@ -25,9 +27,14 @@ public class BeerServiceJPA implements BeerService{
     @Override
     public List<BeerDTO> findAll(String beerName, BeerStyle beerStyle) {
         List<Beer> result;
-        if(StringUtils.hasText(beerName) && beerStyle == null) {
-            result = beerRepository.findAllByBeerNameIsLikeIgnoreCase("%" + beerName + "%");
-        } else if(!StringUtils.hasText(beerName) && beerStyle != null) {
+        if(StringUtils.hasText(beerName)) {
+            beerName = "%" + beerName + "%";
+            if(beerStyle == null) {
+                result = beerRepository.findAllByBeerNameIsLikeIgnoreCase(beerName);
+            } else {
+                result = beerRepository.findAllByBeerNameIsLikeIgnoreCaseAndBeerStyle(beerName , beerStyle);
+            }
+        } else if(beerStyle != null) {
             result = beerRepository.findAllByBeerStyle(beerStyle);
         } else {
             result = beerRepository.findAll();

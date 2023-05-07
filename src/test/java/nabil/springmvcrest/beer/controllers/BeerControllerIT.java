@@ -57,6 +57,20 @@ class BeerControllerIT {
     }
 
     @Test
+    void testGetAllByBeerNameAndBeerStyle() throws Exception {
+        mockMvc.perform(get(BeerController.BEER_API)
+                        .queryParam("beerName", "IPA")
+                        .queryParam("beerStyle", BeerStyle.IPA.toString()))
+                .andExpect(status().isOk())
+                .andExpect(result -> {
+                    List<BeerDTO> dtos = objectMapper.readValue(result.getResponse().getContentAsByteArray(), new TypeReference<>() {});
+                    dtos.forEach(dto -> {
+                        assertThat(dto.getBeerStyle()).isEqualTo(BeerStyle.IPA);
+                    });
+                })
+                .andExpect(jsonPath("$.size()", is(336 )));
+    }
+    @Test
     void testGetAllByBeerStyle() throws Exception {
         mockMvc.perform(get(BeerController.BEER_API)
                         .queryParam("beerStyle", BeerStyle.IPA.toString()))
