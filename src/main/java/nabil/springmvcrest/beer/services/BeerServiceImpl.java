@@ -3,6 +3,8 @@ package nabil.springmvcrest.beer.services;
 import lombok.extern.slf4j.Slf4j;
 import nabil.springmvcrest.beer.model.BeerDTO;
 import nabil.springmvcrest.beer.model.BeerStyle;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -57,9 +59,9 @@ public class BeerServiceImpl implements BeerService{
     }
 
     @Override
-    public List<BeerDTO> findAll(String beerName, BeerStyle beerStyle) {
+    public Page<BeerDTO> findAll(String beerName, BeerStyle beerStyle, Integer pageNumber, Integer pageSize) {
         log.debug("find all beers in our store");
-        return new ArrayList<>(beerMap.values());
+        return new PageImpl<>(new ArrayList<>(beerMap.values()));
     }
 
     @Override

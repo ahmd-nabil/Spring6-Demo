@@ -54,16 +54,17 @@ class BeerControllerTest {
 
     @Test
     void testGetAllBeersSuccess() throws Exception {
-        given(beerService.findAll(null, null)).willReturn(beerServiceImpl.findAll(null, null));
+        given(beerService.findAll(null, null,null,null))
+                .willReturn(beerServiceImpl.findAll(null, null, null , null ));
         mockMvc.perform(get(BeerController.BEER_API).accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.length()", is(3)));
+                .andExpect(jsonPath("$.content.length()", is(3)));
     }
 
     @Test
     void getBeerByIdSuccessTest() throws Exception {
-        BeerDTO testBeer = beerServiceImpl.findAll(null, null).get(0);
+        BeerDTO testBeer = beerServiceImpl.findAll(null, null, null, null).getContent().get(0);
         given(beerService.findBeerById(testBeer.getId())).willReturn(Optional.of(testBeer));
 
         mockMvc.perform(get(BeerController.BEER_API_ID, testBeer.getId()))
@@ -83,8 +84,8 @@ class BeerControllerTest {
 
     @Test
     void testAddBeer() throws Exception {
-        BeerDTO beer = beerServiceImpl.findAll(null, null).get(0);
-        given(beerService.addNewBeer(any(BeerDTO.class))).willReturn(beerServiceImpl.findAll(null, null).get(0));
+        BeerDTO beer = beerServiceImpl.findAll(null, null, null, null).getContent().get(0);
+        given(beerService.addNewBeer(any(BeerDTO.class))).willReturn(beerServiceImpl.findAll(null, null, null, null).getContent().get(0));
         mockMvc.perform(post(BeerController.BEER_API)
                 .accept(MediaType.APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON)
@@ -107,7 +108,7 @@ class BeerControllerTest {
 
     @Test
     void testUpdateBeerSuccess() throws Exception {
-        BeerDTO beer = beerServiceImpl.findAll(null, null).get(0);
+        BeerDTO beer = beerServiceImpl.findAll(null, null, null, null).getContent().get(0);
         given(beerService.updateBeer(any(UUID.class), any(BeerDTO.class))).willReturn(Optional.ofNullable(beer));
         mockMvc.perform(put(BeerController.BEER_API_ID, beer.getId())
                 .accept(MediaType.APPLICATION_JSON)
@@ -122,7 +123,7 @@ class BeerControllerTest {
 
     @Test
     void testDeleteBeer() throws Exception {
-        BeerDTO beer = beerServiceImpl.findAll(null, null).get(0);
+        BeerDTO beer = beerServiceImpl.findAll(null, null, null, null).getContent().get(0);
         given(beerService.delete(any())).willReturn(true);
         mockMvc.perform(delete(BeerController.BEER_API_ID, beer.getId()).accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNoContent());
@@ -131,7 +132,7 @@ class BeerControllerTest {
 
     @Test
     void testIdInBodyDelete() throws Exception {
-        BeerDTO beer = beerServiceImpl.findAll(null, null).get(0);
+        BeerDTO beer = beerServiceImpl.findAll(null, null, null, null).getContent().get(0);
         mockMvc.perform(delete(BeerController.BEER_API)
                 .content(beer.getId().toString()))
                 .andExpect(status().isNoContent());
