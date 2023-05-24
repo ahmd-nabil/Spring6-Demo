@@ -2,7 +2,8 @@ package nabil.springmvcrest.beer.controllers;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import nabil.springmvcrest.beer.model.BeerDTO;import nabil.springmvcrest.beer.model.BeerStyle;
+import nabil.springmvcrest.beer.model.BeerDTO;
+import nabil.springmvcrest.beer.model.BeerStyle;
 import nabil.springmvcrest.beer.services.BeerService;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpHeaders;

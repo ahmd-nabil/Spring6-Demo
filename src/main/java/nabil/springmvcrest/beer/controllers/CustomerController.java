@@ -3,12 +3,12 @@ package nabil.springmvcrest.beer.controllers;
 import lombok.RequiredArgsConstructor;
 import nabil.springmvcrest.beer.model.CustomerDTO;
 import nabil.springmvcrest.beer.services.CustomerService;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -19,8 +19,9 @@ public class CustomerController {
     public final static String CUSTOMER_API_ID = CUSTOMER_API + "/{id}";
 
     @GetMapping(CUSTOMER_API)
-    public List<CustomerDTO> getAllCustomers() {
-        return customerService.findAll();
+    public Page<CustomerDTO> getAllCustomers(@RequestParam(value = "pageNumber", required = false)  Integer pageNumber,
+                                             @RequestParam(value = "pageSize", required = false) Integer pageSize) {
+        return customerService.findAll(pageNumber, pageSize);
     }
 
     @GetMapping(CUSTOMER_API_ID)

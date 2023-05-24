@@ -10,10 +10,10 @@ import org.mockito.Captor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Optional;
 import java.util.UUID;
@@ -54,11 +54,11 @@ class CustomerControllerTest {
 
     @Test
     void testGetAllCustomers() throws Exception {
-        given(customerService.findAll()).willReturn(new ArrayList<>(Collections.singleton(customerDTO)));
+        given(customerService.findAll(any(), any())).willReturn(new PageImpl<>(Collections.singletonList(customerDTO)));
         mockMvc.perform(get(CustomerController.CUSTOMER_API).accept(MediaType.APPLICATION_JSON))
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.length()", is(1)));
+                .andExpect(jsonPath("$.content.length()", is(1)));
     }
 
     @Test
