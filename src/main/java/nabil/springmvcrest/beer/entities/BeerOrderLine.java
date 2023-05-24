@@ -3,8 +3,6 @@ package nabil.springmvcrest.beer.entities;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.util.UUID;
-
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
@@ -21,11 +19,11 @@ public class BeerOrderLine {
     @Version
     private Integer version;
 
-    @ManyToOne
+    @ManyToOne(optional = false)
     @MapsId("beerOrderId")
     private BeerOrder beerOrder;
 
-    @ManyToOne
+    @ManyToOne(optional = false)
     @MapsId("beerId")
     private Beer beer;
 }
