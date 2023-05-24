@@ -1,7 +1,10 @@
 package nabil.springmvcrest.beer.entities;
 
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.JdbcTypeCode;
@@ -13,12 +16,21 @@ import java.util.Set;
 import java.util.UUID;
 
 @Entity
-@AllArgsConstructor
+//@AllArgsConstructor  Builder pattern uses @AllArgsConstructor, and I wanna set customer manually to deal with bidirectional relationship
 @NoArgsConstructor
 @Builder
 @Setter
 @Getter
 public class BeerOrder {
+
+    public BeerOrder(UUID id, LocalDateTime createdDate, LocalDateTime updatedDate, Integer version, Customer customer, Set<BeerOrderLine> beerOrderLines) {
+        this.id = id;
+        this.createdDate = createdDate;
+        this.updatedDate = updatedDate;
+        this.version = version;
+        setCustomer(customer);
+        this.beerOrderLines = beerOrderLines;
+    }
 
     @Id
     @GeneratedValue(generator = "UUID")
@@ -40,6 +52,10 @@ public class BeerOrder {
 
     @ManyToOne(optional = false)
     private Customer customer;
+    public void setCustomer(Customer customer) {
+        this.customer = customer;
+        customer.getBeerOrders().add(this);
+    }
 
     @OneToMany(mappedBy = "beerOrder")
     private Set<BeerOrderLine> beerOrderLines;
