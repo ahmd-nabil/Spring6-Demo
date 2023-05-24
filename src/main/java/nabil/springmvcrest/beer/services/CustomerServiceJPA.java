@@ -32,11 +32,16 @@ public class CustomerServiceJPA implements CustomerService{
 
     @Override
     public Optional<CustomerDTO> update(UUID id, CustomerDTO customerDTO) {
-        return null;
+        if(!customerRepository.existsById(id))
+            return Optional.ofNullable(null);
+        return Optional.of(customerMapper.customerToCustomerDto(customerRepository.save(customerMapper.customerDtoToCustomer(customerDTO))));
     }
 
     @Override
     public void deleteById(UUID id) {
-
+        if(!customerRepository.existsById(id)) {
+            return;
+        }
+        customerRepository.deleteById(id);
     }
 }
