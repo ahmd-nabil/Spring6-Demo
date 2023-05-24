@@ -17,6 +17,7 @@ import org.hibernate.type.SqlTypes;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
@@ -60,6 +61,7 @@ public class Beer {
     @UpdateTimestamp
     private LocalDateTime updateDate;
 
+    @Builder.Default
     @OneToMany(mappedBy = "beer")
-    private Set<BeerOrderLine> beerOrderLines;
+    private Set<BeerOrderLine> beerOrderLines = new HashSet<>();
 }

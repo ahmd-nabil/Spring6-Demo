@@ -12,6 +12,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 import org.hibernate.type.SqlTypes;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
@@ -57,6 +58,8 @@ public class BeerOrder {
         customer.getBeerOrders().add(this);
     }
 
+    @Builder.Default
     @OneToMany(mappedBy = "beerOrder")
-    private Set<BeerOrderLine> beerOrderLines;
+    private Set<BeerOrderLine> beerOrderLines = new HashSet<>();
+
 }
