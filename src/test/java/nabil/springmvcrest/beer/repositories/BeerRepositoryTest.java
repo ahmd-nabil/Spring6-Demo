@@ -2,11 +2,13 @@ package nabil.springmvcrest.beer.repositories;
 
 import jakarta.validation.ConstraintViolationException;
 import nabil.springmvcrest.beer.entities.Beer;
+import nabil.springmvcrest.beer.entities.Category;
 import nabil.springmvcrest.beer.model.BeerStyle;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 
@@ -19,6 +21,8 @@ class BeerRepositoryTest {
     @Autowired
     BeerRepository beerRepository;
 
+    @Autowired
+    CategoryRepository categoryRepository;
     Beer beer;
 
     @BeforeEach
@@ -49,4 +53,29 @@ class BeerRepositoryTest {
         });
     }
 
+    @Test
+    @Transactional
+    void testSaveBeerAndCategorySync() {
+        Beer savedBeer = beerRepository.save(beer);
+        Category savedCategory = categoryRepository.save(Category.builder().description("cat1").build());
+        savedBeer.addCategory(savedCategory);
+        assertThat(savedCategory.getBeers().size()).isEqualTo(1);
+        assertThat(savedCategory.getBeers().contains(savedBeer)).isTrue();
+    }
+
+
+    @Test
+    @Transactional
+    void testRemoveCategorySync() {
+        // given
+        Category savedCat = categoryRepository.save(Category.builder().description("CAT!").build());
+        Beer savedBeer = beerRepository.save(beer);
+        beer.addCategory(savedCat);
+        beerRepository.flush();
+        assertThat(savedBeer.getCategories().size()).isEqualTo(1);
+        assertThat(savedCat.getBeers().size()).isEqualTo(1);
+        //when
+        savedBeer.removeCategory(savedCat);
+        assertThat(savedCat.getBeers().size()).isEqualTo(0);
+    }
 }

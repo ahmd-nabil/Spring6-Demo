@@ -15,9 +15,11 @@ import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.hibernate.type.SqlTypes;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
 
@@ -26,7 +28,7 @@ import java.util.UUID;
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
-public class Beer {
+public class Beer implements Serializable {
     @Id
     @GeneratedValue(generator = "UUID")
     @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
@@ -64,4 +66,51 @@ public class Beer {
     @Builder.Default
     @OneToMany(mappedBy = "beer")
     private Set<BeerOrderLine> beerOrderLines = new HashSet<>();
+
+    @Builder.Default
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH})
+    @JoinTable(name = "beer_category",
+            joinColumns = @JoinColumn(name = "beer_id"),
+            inverseJoinColumns = @JoinColumn(name = "category_id"))
+    private Set<Category> categories = new HashSet<>();
+
+    public void addCategory(Category category) {
+        this.categories.add(category);
+        category.getBeers().add(this);
+    }
+
+    public void removeCategory(Category category) {
+        this.categories.remove(category);
+        category.getBeers().remove(this);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Beer beer = (Beer) o;
+        return Objects.equals(id, beer.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
+    }
+
+    @Override
+    public String toString() {
+        return "Beer{" +
+                "id=" + id +
+                ", version=" + version +
+                ", beerName='" + beerName + '\'' +
+                ", beerStyle=" + beerStyle +
+                ", upc='" + upc + '\'' +
+                ", quantityOnHand=" + quantityOnHand +
+                ", price=" + price +
+                ", createdDate=" + createdDate +
+                ", updateDate=" + updateDate +
+                ", beerOrderLines=" + beerOrderLines +
+                ", categories=" + categories.stream().map(Category::getDescription).toList() +
+                '}';
+    }
 }
