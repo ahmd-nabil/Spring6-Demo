@@ -47,6 +47,7 @@ class BeerOrderRepositoryTest {
     }
 
     @Test
+    @Transactional // to fix getting customer BeerOrderList "lazily initialized"
     void testSaveBeerOrder() {
         BeerOrder beerOrder = BeerOrder.builder().customer(customer).build();
         beerOrderRepository.saveAndFlush(beerOrder);
